@@ -40,85 +40,93 @@ Ce projet a pour objectif de réaliser la **maquette d'une application** permett
 
 ---
 
-## 3. Répartition des Rôles et des Tâches
+## 👥 Répartition des Rôles
 
-### 👨‍💻 Lucas BUCHER — Lead Développement Python & Simulation
-* **Responsabilité :** Algorithmes principaux, simulation du réseau routier et calcul d'itinéraire.
-* **Tâches :**
-  - [ ] Développement du moteur de simulation en Python (carrefours, densité du trafic).
-  - [ ] Algorithme de calcul d'itinéraire optimal (Point A vers Point B).
-  - [ ] Cartographie logicielle / Spécifications de l'IA graphie.
-  - [ ] Participation à la rédaction du Cahier des charges (Partie technique).
+| Membre | Périmètre principal | Composants gérés |
+| :--- | :--- | :--- |
+| **Lucas** | Moteur & Logique métier | `models/`, `simulation.py`, `main.py` |
+| **Quentin** | Réseau & Mathématiques GPS | `network/`, `utils/` |
+| **Benjamin** | Interface Graphique, BDD & Automation | `gui/`, `database/`, `setup_vm1_server.sh`, `setup_vm2_client.sh` |
 
 ---
 
-### 🛠️ Benjamin DEIBER — Infrastructure, Scripts & Documentation
-* **Responsabilité :** Gestion de l'environnement, scripts PowerShell, BDD et structuration documentaire.
-* **Tâches :**
-  - [ ] Développement des scripts **PowerShell** pour la gestion de l'autorisation d'accès.
-  - [ ] Conception et interfaçage de la Base de Données (stockage des feux, accès, usagers).
-  - [ ] Gestion et structuration du dépôt **GitHub**.
-  - [ ] Rédaction de la **Doc d'installation** (`docs/installation.md`) et de la **Doc d'usage** (`docs/usage.md`).
-
----
-
-### 📊 Quentin ALTINOK — Logique V2X, Finance & Gestion de Projet
-* **Responsabilité :** Interconnexion V2I/V2V, gestion administrative et chiffrage financier.
-* **Tâches :**
-  - [ ] Modélisation de la logique V2I (feux tricolores) et V2V (alerte usagers).
-  - [ ] Rédaction des **Comptes-Rendus Hebdomadaires** (CR 2, 3, 4 et 5).
-  - [ ] Élaboration du **Livrable Finance** (chiffrage et budget du projet).
-  - [ ] Rédaction de la **Doc de réponses** (`docs/reponses.md`).
-
----
-
-## 4. Matrice des Livrables Obligatoires
-
-| Livrable | Responsable Principal | Relecture / Validation | Échéance | Statut |
-| :--- | :--- | :--- | :--- | :---: |
-| **QQOQCP & Cahier des Charges** | Lucas BUCHER | Quentin & Benjamin | 25/09/2026 | 🟡 En cours |
-| **Moteur Python & Simulation** | Lucas BUCHER | Quentin ALTINOK | 25/10/2026 | ⚪ À faire |
-| **Scripts PowerShell & BDD** | Benjamin DEIBER | Lucas BUCHER | 25/10/2026 | ⚪ À faire |
-| **Comptes-Rendus Hebdomadaires (CR2–CR5)** | Quentin ALTINOK | Benjamin DEIBER | Hebdomadaire | 🟡 En cours |
-| **Livrable Finance** | Quentin ALTINOK | Lucas BUCHER | 15/11/2026 | ⚪ À faire |
-| **Documentations (`README`, Docs)** | Benjamin DEIBER | Tous | 15/11/2026 | 🟡 En cours |
-| **Dépôt GitHub partagé (`fdrouhin-uha`)** | Benjamin DEIBER | Tous | 15/11/2026 | 🟡 En cours |
-
----
-
-
-## 🏗️ Architecture du Projet
-
-Le projet adopte une architecture modulaire, orientée objet et multi-threadée, découpée selon la séparation des responsabilités.
+## 📁 Structure du Projet
 
 ```text
 projet_simulation/
-├── models/                     # Modèles métiers (1 fichier par classe)
-│   ├── __init__.py             # Exportation des classes pour des imports simplifiés
-│   ├── voiture.py              # Classe de base pour les véhicules
-│   ├── voiture_autonome.py     # Logique de conduite automatisée (hérite de Voiture)
-│   ├── vehicule_urgence.py     # Gestion du trajet GPS et priorité (hérite de Voiture)
-│   └── feu_carrefour.py        # Gestion des états et cycles des feux de circulation
+├── models/                     # [Lucas] Modèles objets (1 classe par fichier)
+│   ├── __init__.py             # Exporte les classes pour simplifier les imports
+│   ├── voiture.py              # Classe de base (position XY/GPS, vitesse, identifiant)
+│   ├── voiture_autonome.py     # Hérite de Voiture, gère les distances de sécurité
+│   ├── vehicule_urgence.py     # Hérite de Voiture, intègre l'itinéraire et la priorité
+│   └── feu_carrefour.py        # Gestion des états (vert/orange/rouge) et cycles des feux
 │
-├── database/                   # Gestion de la persistance des données
-│   ├── __init__.py
-│   └── stats_db.py             # Base SQLite (historique des passages, temps d'attente, KPI)
+├── database/                   # [Benjamin] Persistance des données (MariaDB)
+│   ├── __init__.py             # Package Python
+│   ├── schema.sql              # Script SQL de création de la BDD et des tables
+│   └── stats_db.py             # Interface Python MariaDB (connexion, requêtes, logs)
 │
-├── network/                    # Couche de communication par Sockets
-│   ├── __init__.py
-│   ├── socket_server.py        # Serveur TCP diffusant l'état de la simulation
-│   └── socket_client.py        # Client TCP (s'exécute dans un thread dédié côté GUI)
+├── network/                    # [Quentin] Communication inter-VM par Sockets TCP
+│   ├── __init__.py             # Package Python
+│   ├── socket_server.py        # Serveur TCP sur VM 1 (port 5000), diffusion de l'état en JSON
+│   └── socket_client.py        # Client TCP sur VM 2 (thread dédié pour l'IHM)
 │
-├── gui/                        # Interface Graphique (IHM)
-│   ├── __init__.py
-│   ├── map_canvas.py           # Composant de rendu visuel (carte, véhicules, feux)
-│   ├── stats_panel.py          # Tableau de bord et graphiques en temps réel
-│   └── main_window.py          # Fenêtre principale assemblant l'IHM
+├── gui/                        # [Benjamin] Interface graphique utilisateur
+│   ├── __init__.py             # Package Python
+│   ├── map_canvas.py           # Composant de rendu (carte, véhicules, feux, trajets GPS)
+│   ├── stats_panel.py          # Panneau d'indicateurs (KPIs et graphiques de fluidité)
+│   └── main_window.py          # Fenêtre principale assemblant la carte et les statistiques
 │
-├── utils/                      # Fonctions utilitaires
-│   ├── __init__.py
-│   └── gps_utils.py            # Conversions GPS -> Pixels et calculs de distances réelles
+├── utils/                      # [Quentin] Fonctions utilitaires
+│   ├── __init__.py             # Package Python
+│   └── gps_utils.py            # Calculs mathématiques (conversion GPS <-> Pixels, formule de Haversine)
 │
-├── simulation.py               # Moteur algorithmique principal & boucle de physique
-├── main.py                     # Point d'entrée principal de l'application
-└── setup_and_run.ps1           # Script PowerShell d'installation et de lancement
+├── simulation.py               # [Lucas] Moteur algorithmique principal & boucle de physique
+├── main.py                     # [Lucas] Point d'entrée de l'application
+├── setup_vm1_server.sh         # [Benjamin] Script Bash d'installation et de lancement (VM 1)
+└── setup_vm2_client.sh         # [Benjamin] Script Bash d'installation et de lancement (VM 2)
+
+📜 Rôle Détaillé Fichier par Fichier
+🔹 Racines & Scripts
+
+    main.py : Point d'entrée de l'application. Initialise les composants selon le rôle sélectionné (--role server ou --role client).
+
+    simulation.py : Boucle physique principale. Calcule les déplacements des véhicules, vérifie la règle des 50 mètres du véhicule d'urgence et ordonne le forçage des feux.
+
+    setup_vm1_server.sh : Automatise sur la VM 1 la configuration de MariaDB, l'exécution du script database/schema.sql, l'ouverture du pare-feu (ufw), la création du venv et le lancement du moteur.
+
+    setup_vm2_client.sh : Automatise sur la VM 2 l'installation des dépendances graphiques, la création du venv et la connexion au serveur via son adresse IP.
+
+🔹 Dossier models/
+
+    models/voiture.py : Définit les attributs de base de tout véhicule (coordonnées, vitesse, cap).
+
+    models/voiture_autonome.py : Ajoute la conduite adaptative pour maintenir une distance de sécurité avec le véhicule précédent.
+
+    models/vehicule_urgence.py : Contient la logique d'itinéraire prioritaire et calcule sa distance en temps réel par rapport aux intersections.
+
+    models/feu_carrefour.py : Modélise les feux de circulation (couleur, temps de cycle, forçage prioritaire).
+
+🔹 Dossier database/
+
+    database/schema.sql : Fichier DDL contenant les requêtes SQL de création de la base de données (simu_db) et des tables (evenements_urgence, metriques_trafic).
+
+    database/stats_db.py : Module Python d'interaction avec MariaDB via mysql-connector-python. Exécute les requêtes d'insertion d'événements et extrait les KPI pour l'interface graphique.
+
+🔹 Dossier network/
+
+    network/socket_server.py : Écoute sur la VM 1 (port 5000). Sérialise l'état complet du réseau routier au format JSON et l'envoie en continu aux clients connectés.
+
+    network/socket_client.py : Tourne en arrière-plan dans un thread sur la VM 2. Reçoit le flux JSON et met à jour l'IHM en temps réel sans bloquer l'affichage.
+
+🔹 Dossier gui/
+
+    gui/map_canvas.py : Zone de dessin dynamique (canvas) pour représenter visuellement les routes, les voitures et l'état des feux.
+
+    gui/stats_panel.py : Panneau d'affichage contenant les compteurs d'urgence et les graphiques de temps d'attente évité.
+
+    gui/main_window.py : Fenêtre Tkinter (ou CustomTkinter) qui intègre le canevas de simulation et le panneau latéral de statistiques.
+
+🔹 Dossier utils/
+
+    utils/gps_utils.py : Fournit la formule de Haversine pour calculer la distance réelle en mètres entre deux points GPS et convertir ces positions sur le plan en pixels de l'écran.
