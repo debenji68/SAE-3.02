@@ -13,29 +13,17 @@ Ce projet a pour objectif de réaliser la **maquette d'une application** permett
 
 ---
 
-## 2. Planning Prévisionnel (Septembre – Novembre 2026)
-
 ```
-┌──────────────────────────────────────────────────────────────────────────────────┐
-│ PHASE 1 : Cadrage & Spécifications (09/09 - 25/09)                              │
-│  ├─ Rédaction du Cahier des charges & QQOQCP finalisé                             │
-│  └─ Architecture logicielle & choix des modules Python                           │
-├──────────────────────────────────────────────────────────────────────────────────┤
-│ PHASE 2 : Développement de la Maquette (26/09 - 25/10)                           │
-│  ├─ Module 1 : Simulation de trafic & Algorithmique (Point A -> Point B)         │
-│  ├─ Module 2 : Logique V2I / V2V & Gestion des priorités aux carrefours           │
-│  └─ Module 3 : Scripts d'autorisation / Administration (PowerShell & BDD)        │
-├──────────────────────────────────────────────────────────────────────────────────┤
-│ PHASE 3 : Intégration, Tests & Rédaction Docs (26/10 - 08/11)                     │
-│  ├─ Tests d'intégration de la maquette                                           │
-│  ├─ Rédaction des documentations (Installation, Usage, Réponses, README)         │
-│  └─ Préparation du dépôt GitHub structuré                                        │
-├──────────────────────────────────────────────────────────────────────────────────┤
-│ PHASE 4 : Finalisation & Soutenance (09/11 - 26/11)                              │
-│  ├─ 15 Novembre : Remise finale du livrable intermédiaire / GitHub               │
-│  ├─ 20 Novembre : Évaluation RZ Séance 1 (1h15)                                  │
-│  └─ 26 Novembre : Évaluation RZ Séance 2 (03h30) & Préparation soutenance        │
-└──────────────────────────────────────────────────────────────────────────────────┘
+## 📅 Planning de Développement Prévisionnel
+
+Le projet est découpé en 4 phases principales afin d'assurer un développement progressif et sans blocage sous PyCharm avant le déploiement sur les VM.
+
+| Phase | Objectifs & Livrables | Tâches par Membre |
+| :--- | :--- | :--- |
+| **Phase 1 : Socle & Modèles**<br>*(Semaine 1)* | • Structure du dépôt Git.<br>• Classes POO de base.<br>• Structure BDD MariaDB.<br>• Protocole JSON de communication. | • **Lucas :** Création du dossier `models/` (`voiture.py`, `feu_carrefour.py`, etc.).<br>• **Quentin :** Implémentation des calculs GPS/Haversine dans `utils/gps_utils.py`.<br>• **Benjamin :** Création du schéma SQL `database/schema.sql` et de la classe `stats_db.py`. |
+| **Phase 2 : Moteur & Réseau**<br>*(Semaine 2)* | • Boucle de simulation fonctionnelle.<br>• Règle des 50 m opérationnelle.<br>• Sockets TCP fonctionnels inter-modules. | • **Lucas :** Développement de `simulation.py` (physique, déplacements, priorité d'urgence).<br>• **Quentin :** Développement du serveur TCP (`socket_server.py`) et client (`socket_client.py`).<br>• **Benjamin :** Écriture des requêtes d'insertion et de statistiques dans `stats_db.py`. |
+| **Phase 3 : Interface Graphique**<br>*(Semaine 3)* | • Rendu dynamique de la carte.<br>• Intégration du tableau de bord.<br>• Connexion GUI <-> Thread Client. | • **Lucas :** Finalisation de la logique globale et intégration avec la BDD dans `simulation.py`.<br>• **Quentin :** Tests de sérialisation JSON et gestion des reconnexions Sockets.<br>• **Benjamin :** Développement de `gui/map_canvas.py`, `stats_panel.py` et `main_window.py`. |
+| **Phase 4 : Automation & VM**<br>*(Semaine 4)* | • Scripts Bash d'installation.<br>• Déploiement sur VM 1 et VM 2.<br>• Tests d'intégration réseau & BDD. | • **Lucas :** Validation du moteur de simulation sous Linux (VM 1).<br>• **Quentin :** Tests de communication réseau inter-VM (VM 1 <-> VM 2).<br>• **Benjamin :** Rédaction de `setup_vm1_server.sh` et `setup_vm2_client.sh`, tests de déploiement global. |
 ```
 
 ---
