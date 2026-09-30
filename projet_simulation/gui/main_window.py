@@ -33,3 +33,5 @@ class MainWindow(QMainWindow):
         if self.db:
             kpis = self.db.lire_kpis()
             self.stats_panel.update_kpis(kpis)
+
+
