@@ -24,17 +24,6 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.stats_panel, stretch=1)
 
 
-
-
-
-
-
-
-
-
-
-
-
         # Lier le signal Sockets de Quentin s'il existe
         if self.socket_client and hasattr(self.socket_client, 'data_received'):
             self.socket_client.data_received.connect(self.donne_recu)
