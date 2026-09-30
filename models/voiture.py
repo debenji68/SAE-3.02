@@ -5,6 +5,7 @@ class Voiture :
         self.__positionY = positionY
         self.__vitesse = vitesse
 
+
     def __str__(self) -> str:
         return f" Voiture : ({self.__identifiant} , {self.__positionX} , {self.__positionY} , {self.__vitesse})"
 
