@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
 
 
 
+
         # Lier le signal Sockets de Quentin s'il existe
         if self.socket_client and hasattr(self.socket_client, 'data_received'):
             self.socket_client.data_received.connect(self.donne_recu)
