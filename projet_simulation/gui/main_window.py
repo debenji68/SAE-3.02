@@ -1,4 +1,5 @@
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout
+import sys
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication
 from .map_canvas import MapCanvas
 from .stats_panel import StatsPanel
 
@@ -35,3 +36,8 @@ class MainWindow(QMainWindow):
             self.stats_panel.update_kpis(kpis)
 
 
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    win = MapCanvas()
+    win.show()
+    app.exec()

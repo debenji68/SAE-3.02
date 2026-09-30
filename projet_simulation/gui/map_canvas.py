@@ -28,7 +28,7 @@ class MapCanvas(QWidget):
         #Dessin des feux (a modifier selon la class)
         for feu in self.data.get("feux", []):
             x, y = feu.get("x", 0), feu.get("y", 0)
-            etat = feu.etat
+            etat = feu.get("etat", "rouge")
             if etat == "rouge":
                 couleur = QColor("red")
             elif etat == "vert":
@@ -44,11 +44,14 @@ class MapCanvas(QWidget):
         for v in self.data.get("vehicules", []):
             x, y = v.get("x", 0), v.get("y", 0)
             est_urgence = v.get("est_urgence", False)
-
-            couleur = QColor(255, 0, 0) if est_urgence else QColor(0, 150, 255)
+            if est_urgence:
+                couleur = QColor("yellow")
+            else:
+                couleur = QColor("blue")
             painter.setBrush(QBrush(couleur))
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRect(int(x) - 6, int(y) - 6, 12, 12)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
