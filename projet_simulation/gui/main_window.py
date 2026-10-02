@@ -1,7 +1,7 @@
 import sys
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication
-from .map_canvas import MapCanvas
-from .stats_panel import StatsPanel
+from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication,QVBoxLayout,QTabWidget
+from map_canvas import MapCanvas
+from stats_panel import StatsPanel
 
 class MainWindow(QMainWindow):
     def __init__(self, socket_client=None, db=None):
@@ -11,19 +11,23 @@ class MainWindow(QMainWindow):
         self.socket_client = socket_client
         self.db = db
 
-        # Layout central
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        main_layout = QHBoxLayout(central_widget)
+        self.onglets = QTabWidget()
+        self.setCentralWidget(self.onglets)
 
-        # IHM
+
+        # Onglet 1 : Canva
+        self.page_canva = QWidget()
+        self.layout_canva = QVBoxLayout(self.page_canva)
         self.canvas = MapCanvas()
+        self.layout_canva.addWidget(self.canvas)
+        self.onglets.addTab(self.page_canva, "Simulation")
+
+        # Onglet 2 : Stat
+        self.page_stat = QWidget()
+        self.layout_stat = QVBoxLayout(self.page_stat)
         self.stats_panel = StatsPanel()
-
-        #widget
-        main_layout.addWidget(self.canvas, stretch=3)
-        main_layout.addWidget(self.stats_panel, stretch=1)
-
+        self.layout_stat.addWidget(self.stats_panel)
+        self.onglets.addTab(self.page_stat, "Statistique")
 
         # Lier le signal Sockets de Quentin s'il existe
         if self.socket_client and hasattr(self.socket_client, 'data_received'):
@@ -38,6 +42,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    win = MapCanvas()
+    win = MainWindow()
     win.show()
     app.exec()

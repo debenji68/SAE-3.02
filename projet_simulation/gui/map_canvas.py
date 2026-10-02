@@ -9,7 +9,7 @@ class MapCanvas(QWidget):
     def __init__(self):
         super().__init__()
         self.data = {"vehicules": [], "feux": []}
-        self.setStyleSheet("background-color: Black;")
+        self.setStyleSheet("background-color: white;")
 
 
     def update_data(self, data):
