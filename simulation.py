@@ -4,15 +4,6 @@ from datetime import datetime
 
 from projet_simulation.models import feuDeCirculation, vehicule_urgence, Voiture
 
-import math
-import time
-from datetime import datetime
-
-from projet_simulation.models.feu_carrefour import feuDeCirculation
-from projet_simulation.models.vehicule_urgence import vehicule_urgence
-from projet_simulation.models.voiture import Voiture
-
-
 def trier_file_par_position(file_voitures, axe="x"):
     """Tire les véhicules d'une file selon leur sens et leur position par rapport au carrefour.
 
