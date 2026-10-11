@@ -2,11 +2,7 @@ import math
 import time
 from datetime import datetime
 
-from projet_simulation.models.feu_carrefour import feuDeCirculation
-from projet_simulation.models.vehicule_urgence import vehicule_urgence
-from projet_simulation.models.voiture import Voiture
-
-peux tu me montrer comment faire un git push de mon projet sur GitHub avec Pycharm
+from projet_simulation.models import feuDeCirculation, vehicule_urgence, Voiture
 
 import math
 import time
