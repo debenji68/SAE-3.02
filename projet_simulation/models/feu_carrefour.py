@@ -1,114 +1,143 @@
 from datetime import datetime, timedelta
 
+
 class feuDeCirculation:
-    #déclaration des attributs privés ainsi que du constructeur
-    def __init__(self,etat:str,duree_maintien_feu_vert:float=5.0,duree_maintien_feu_rouge:float=5.0):
-        self.__etat = etat # l'etat du feu de circulation
-        self.en_transition = False # permet de changer l'etat du feux de circulation si c'est false
-        self.etat_cible = None # <-- Retient si on vise vert ou rouge
+    """Gère un feu de circulation avec gestion des transitions temporelles (Vert -> Orange -> Rouge)."""
+
+    def __init__(self, etat: str, duree_maintien_feu_vert: float = 5.0, duree_maintien_feu_rouge: float = 5.0):
+        # État courant du feu ('vert', 'orange', 'rouge')
+        self.__etat = etat
+
+        # Indicateur de transition : True si le feu est actuellement au feu orange
+        self.en_transition = False
+
+        # Couleur visée à la fin de la phase orange ('vert' ou 'rouge')
+        self.etat_cible = None
+
+        # Chronomètre enregistrant le début de la phase orange (réinitialisé hors transition)
         self.heure_debut_transition = None
-        # efface le chronomètre pour les calculs de durée  pour les changements d'état
+
+        # Chronomètre enregistrant le moment du dernier passage au vert ou au rouge fixe
         self.heure_dernier_changement = datetime.now()
 
+        # Durées d'affichage minimales des feux fixes (en secondes)
         self.__duree_maintien_feu_vert = duree_maintien_feu_vert
         self.__duree_maintien_feu_rouge = duree_maintien_feu_rouge
 
     def __str__(self) -> str:
-        return f" feuDeCirculation ({self.__etat}{self.__duree_maintien_feu_vert}{self.__duree_maintien_feu_rouge})"
+        return f"feuDeCirculation(état={self.__etat}, vert={self.__duree_maintien_feu_vert}s, rouge={self.__duree_maintien_feu_rouge}s)"
 
-    # déclaration des accesseurs pour les changements d'état du feu
+    # --- Accesseurs ---
 
     def get_etat(self):
         return self.__etat
-    def set_etat(self,etat):
-        self.__etat = etat
-    etat = property(get_etat,set_etat)
 
+    def set_etat(self, etat):
+        self.__etat = etat
+
+    def get_duree_maintien_feu_vert(self):
+        return self.__duree_maintien_feu_vert
+
+    def set_duree_maintien_feu_vert(self, duree_maintien_feu_vert: float):
+        self.__duree_maintien_feu_vert = duree_maintien_feu_vert
+
+    def get_duree_maintien_feu_rouge(self):
+        return self.__duree_maintien_feu_rouge
+
+    def set_duree_maintien_feu_rouge(self, duree_maintien_feu_rouge: float):
+        self.__duree_maintien_feu_rouge = duree_maintien_feu_rouge
+
+    # Définition des propriétés
+    etat = property(get_etat, set_etat)
+    duree_maintien_feu_vert = property(fget=get_duree_maintien_feu_vert, fset=set_duree_maintien_feu_vert)
+    duree_maintien_feu_rouge = property(fget=get_duree_maintien_feu_rouge, fset=set_duree_maintien_feu_rouge)
+
+    # --- Gestion des transitions d'état ---
 
     def passer_au_feu_vert(self):
-    #Initie la transition du feu rouge au feu vert (par le feu orange)
+        """Initie la transition d'un feu rouge vers le feu vert (passage à l'orange)."""
         if self.etat == "rouge" and not self.en_transition:
             self.etat = "orange"
-            self.etat_cible = "vert" # <-- On indique la cible
+            self.etat_cible = "vert"
             self.en_transition = True
             self.heure_debut_transition = datetime.now()
-            # calculer le temps d'attente du feu pour passer au feu vert dans la méthode mettre_au_feu_vert
 
-
-    def mettre_au_feu_vert(self, delai_secondes: float = 2):
-        # Met à jour le feu pour passer de l'orange au vert après le temps d'attente
-
-        # vérifie que self.en_transition = True  et self.heure_debut_transition contient une date
-        if self.en_transition and self.heure_debut_transition and self.etat_cible=="vert":
+    def mettre_au_feu_vert(self, delai_secondes: float = 2.0):
+        """Finalise le passage au feu vert si le délai au feu orange est écoulé."""
+        # Vérifie qu'une transition vers le vert est bien engagée
+        if self.en_transition and self.heure_debut_transition and self.etat_cible == "vert":
             temps_ecoule = datetime.now() - self.heure_debut_transition
-            # calcul de la durée depuis que le feu est orange
 
-
-            # permet de passer au feu vert si le temps écoulé est supérieur a 2 secondes
+            # Si la durée minimale au feu orange est atteinte, on valide le feu vert
             if temps_ecoule >= timedelta(seconds=delai_secondes):
                 self.etat = "vert"
                 self.en_transition = False
                 self.etat_cible = None
                 self.heure_debut_transition = None
-                self.heure_dernier_changement = datetime.now()
-                # Recommence a compter le temps du feu vert
+                self.heure_dernier_changement = datetime.now()  # Redémarre le chrono du feu vert fixe
 
     def passer_au_feu_rouge(self):
-        # Initie la transition du feu vert au feu rouge (par le feu orange)
+        """Initie la transition d'un feu vert vers le feu rouge (passage à l'orange)."""
         if self.etat == "vert" and not self.en_transition:
             self.etat = "orange"
-            self.etat_cible = "rouge" # <-- On indique la cible
+            self.etat_cible = "rouge"
             self.en_transition = True
             self.heure_debut_transition = datetime.now()
-            # calculer le temps d'attente du feu pour passer au feu rouge dans la méthode mettre_au_feu_rouge
 
-    def mettre_au_feu_rouge(self, delai_secondes: float = 2):
-        # Met à jour le feu pour passer de l'orange au vert après le temps d'attente
-
-        # vérifie que self.en_transition = True  et self.heure_debut_transition contient une date
-        if self.en_transition and self.heure_debut_transition and self.etat_cible=="rouge":
+    def mettre_au_feu_rouge(self, delai_secondes: float = 2.0):
+        """Finalise le passage au feu rouge si le délai au feu orange est écoulé."""
+        # Vérifie qu'une transition vers le rouge est bien engagée
+        if self.en_transition and self.heure_debut_transition and self.etat_cible == "rouge":
             temps_ecoule = datetime.now() - self.heure_debut_transition
-            # calcul de la durée depuis que le feu est orange
 
+            # Si la durée minimale au feu orange est atteinte, on valide le feu rouge
             if temps_ecoule >= timedelta(seconds=delai_secondes):
-            # permet de passer au feu vert si le temps écoulé est supérieur a 2 secondes
                 self.etat = "rouge"
                 self.en_transition = False
                 self.etat_cible = None
                 self.heure_debut_transition = None
-                self.heure_dernier_changement = datetime.now()
-            # Recommence a compter le temps en du feu rouge
+                self.heure_dernier_changement = datetime.now()  # Redémarre le chrono du feu rouge fixe
 
-    def verifier_changement_automatique(self, delai_orange: float= 2.0):
+    def verifier_changement_automatique(self, delai_orange: float = 2.0):
+        """Gère le cycle d'alternance automatique du feu à chaque pas de simulation."""
+        # Phase 1 : Si une transition est déjà en cours (orange), on tente de finaliser l'état cible
         if self.en_transition:
             self.mettre_au_feu_vert(delai_orange)
             self.mettre_au_feu_rouge(delai_orange)
             return
 
-        temps_fixe = datetime.now() - self.heure_dernier_changement
+        # Phase 2 : Si le feu est fixe (vert ou rouge), on vérifie si la durée de maintien est dépassée
+        temps_maintien = datetime.now() - self.heure_dernier_changement
 
-        if self.__etat =="vert" and temps_fixe >= timedelta(seconds=self.__duree_maintien_feu_vert):
-            self.passer_au_feu_rouge()
+        if self.__etat == "vert" and temps_maintien >= timedelta(seconds=self.__duree_maintien_feu_vert):
+            self.passer_au_feu_rouge()  # Le feu vert passe à l'orange (cible rouge)
+        elif self.__etat == "rouge" and temps_maintien >= timedelta(seconds=self.__duree_maintien_feu_rouge):
+            self.passer_au_feu_vert()  # Le feu rouge passe à l'orange (cible vert)
 
-        elif self.__etat == "rouge" and temps_fixe >= timedelta(seconds=self.__duree_maintien_feu_rouge):
-            self.passer_au_feu_vert()
 
 if __name__ == "__main__":
     import time
+
+    # Script de test : vérification du cycle automatique des feux de circulation
+    print("=== Test du cycle automatique d'un feu ===")
+
+    # Initialisation du feu de circulation à l'état 'rouge'
     feuDeCirculation1 = feuDeCirculation("rouge")
+
+    # Sauvegarde de l'état initial pour pouvoir détecter chaque changement de couleur
     etat_actuel = feuDeCirculation1.etat
-    print(f"état de départ : {feuDeCirculation1.etat}")
+    print(f"État de départ : {etat_actuel}\n")
 
-    #feuDeCirculation1.passer_au_feu_vert()
-    #print(f"état pendant transition : {feuDeCirculation1.etat}")
-
-    #print("Attente des 2 secondes d'orange...")
-    for _ in range(500):
+    # Boucle de simulation : 500 itérations de 0,1s (durée totale : 50 secondes)
+    for pas in range(500):
+        # Mise à jour de l'état du feu à chaque pas de temps
         feuDeCirculation1.verifier_changement_automatique()
 
+        # On n'affiche un message que si la couleur du feu a changé
         if feuDeCirculation1.etat != etat_actuel:
-            #print(f"état après 2 secondes : {feuDeCirculation1.etat}")
             etat_actuel = feuDeCirculation1.etat
-            print(f"Changement d'état -> {etat_actuel}")
+            temps_ecoule = (pas + 1) * 0.1
+            print(f"[{temps_ecoule:.1f}s] Changement d'état -> {etat_actuel}")
 
+        # Pause de 0,1 seconde pour simuler le temps réel
         time.sleep(0.1)
