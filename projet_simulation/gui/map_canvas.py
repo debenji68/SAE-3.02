@@ -9,7 +9,6 @@ class MapCanvas(QWidget):
     def __init__(self):
         super().__init__()
         self.data = {"vehicules": [], "feux": []}
-        self.setStyleSheet("background-color: white;")
 
 
     def update_data(self, data):
@@ -21,7 +20,7 @@ class MapCanvas(QWidget):
         painter = QPainter(self)
 
         #Dessin des routes
-        painter.setPen(QPen(QColor("gray"), 80))
+        painter.setPen(QPen(QColor("white"), 80))
         painter.drawLine(0, self.height() // 2, self.width(), self.height() // 2)
         painter.drawLine(self.width() // 2, 0, self.width() // 2, self.height())
 

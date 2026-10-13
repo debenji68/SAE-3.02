@@ -10,6 +10,7 @@ class MainWindow(QMainWindow):
         self.resize(1024, 768)
         self.socket_client = socket_client
         self.db = db
+        self.setStyleSheet("background-color: gray;")
 
         self.onglets = QTabWidget()
         self.setCentralWidget(self.onglets)
