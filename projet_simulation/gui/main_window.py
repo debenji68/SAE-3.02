@@ -1,5 +1,5 @@
 import sys
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QApplication,QVBoxLayout,QTabWidget
+from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication,QVBoxLayout,QTabWidget
 from map_canvas import MapCanvas
 from stats_panel import StatsPanel
 

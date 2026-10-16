@@ -9,3 +9,16 @@ class StatsDB:
         return mysql.connector.connect(self.config)
 
 
+    def enregistrer(self,vehicule_id, feu_id, distance):
+        query = "INSERT INTO uregnce(vehicule_id,feu_id,distance) VALUES (%s, %s, %s)"
+        values = (vehicule_id, feu_id, distance)
+        connection = self.get_connection()
+        cursor = connection.cursor()
+        cursor.execute(query, values)
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+
+    def lire_kpis(self):
+

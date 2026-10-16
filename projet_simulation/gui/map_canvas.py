@@ -1,5 +1,4 @@
 import sys
-
 from PyQt6.QtWidgets import QWidget, QApplication
 from PyQt6.QtGui import QPainter, QColor, QBrush, QPen
 from PyQt6.QtCore import Qt
