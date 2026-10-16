@@ -10,7 +10,7 @@ class StatsDB:
 
 
     def enregistrer(self,vehicule_id, feu_id, distance):
-        query = "INSERT INTO uregnce(vehicule_id,feu_id,distance) VALUES (%s, %s, %s)"
+        query = "INSERT INTO uregnce(vehicule_id, feu_id, distance) VALUES (%s, %s, %s)"
         values = (vehicule_id, feu_id, distance)
         connection = self.get_connection()
         cursor = connection.cursor()
