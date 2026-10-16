@@ -15,7 +15,7 @@ class StatsDB:
         connection = self.get_connection()
         cursor = connection.cursor()
         cursor.execute(query, values)
-        connection.commit()
+        conne   ction.commit()
         cursor.close()
         connection.close()
 
@@ -23,3 +23,5 @@ class StatsDB:
     def lire_kpis(self):
         query_urgences = "SELECT COUNT(*) FROM evenements_urgence"
         query_vitesse = "SELECT AVG(vitesse_moyenne) FROM metriques_trafic"
+
+
