@@ -21,4 +21,5 @@ class StatsDB:
 
 
     def lire_kpis(self):
-
+        query_urgences = "SELECT COUNT(*) FROM evenements_urgence"
+        query_vitesse = "SELECT AVG(vitesse_moyenne) FROM metriques_trafic"
