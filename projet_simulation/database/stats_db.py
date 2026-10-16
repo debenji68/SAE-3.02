@@ -15,7 +15,7 @@ class StatsDB:
         connection = self.get_connection()
         cursor = connection.cursor()
         cursor.execute(query, values)
-        conne   ction.commit()
+        connection.commit()
         cursor.close()
         connection.close()
 
