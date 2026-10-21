@@ -1,7 +1,7 @@
 import math
 import time
 from datetime import datetime
-
+from projet_simulation.database.stats_db import StatsDB
 from projet_simulation.models import feuDeCirculation, vehicule_urgence, Voiture
 
 def trier_file_par_position(file_voitures, axe="x"):
@@ -28,6 +28,14 @@ def trier_file_par_position(file_voitures, axe="x"):
         sens_moins_1.sort(key=lambda v: v.positionY)
 
     return sens_1 + sens_moins_1
+
+def calculer_metriques(vehicules, distance_max=100.0):
+    """Renvoie (vitesse moyenne en km/h, nombre de véhicules) pour les véhicules encore dans la zone."""
+    dans_zone = [v for v in vehicules if abs(v.positionX) <= distance_max and abs(v.positionY) <= distance_max]
+    if not dans_zone:
+        return 0.0, 0
+    vitesse_moyenne = sum(v.vitesse for v in dans_zone) / len(dans_zone)
+    return vitesse_moyenne, len(dans_zone)
 
 
 if __name__ == "__main__":
@@ -66,6 +74,12 @@ if __name__ == "__main__":
         v.en_virage = False
         v.intention_virage = None
         v.type_virage_courant = None
+
+    # Connexion à la bdd
+    db = StatsDB()
+    db.get_connection().close()
+    print("Connexion à MariaDB OK")
+
 
     print("=== Démarrage de la simulation du carrefour ===")
     pas = 0
@@ -180,6 +194,9 @@ if __name__ == "__main__":
             print(f"  Pompier (X)   : pos = {pompier_x.positionX:.1f}, v = {pompier_x.vitesse:.1f} km/h")
             print(f"  Ambulance (Y) : pos = {ambulance_y.positionY:.1f}, v = {ambulance_y.vitesse:.1f} km/h")
 
+        if db is not None and pas % 10 == 0:
+            vitesse_moyenne, nb_vehicule = calculer_metriques(files_voitures_x + files_voitures_y, DISTANCE_FIN)
+            db.enregistrer_metriques(vitesse_moyenne, nb_vehicule)
         # H. Conditions de fin de simulation
         tous_eloignes = all(
             abs(v.positionX) > DISTANCE_FIN or abs(v.positionY) > DISTANCE_FIN

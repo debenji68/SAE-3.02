@@ -19,6 +19,16 @@ class StatsDB:
         cursor.close()
         connection.close()
 
+    def enregistrer_metriques(self, vitesse_moyenne, nb_vehicule):
+        query = "INSERT INTO info_traffic(vitesse_moyenne, nb_vehicule) VALUES (%s, %s)"
+        values = (float(vitesse_moyenne), int(nb_vehicule))
+        connection = self.get_connection()
+        cursor = connection.cursor()
+        cursor.execute(query, values)
+        connection.commit()
+        cursor.close()
+        connection.close()
+
 
     def lire_kpis(self):
         query_urgences = "SELECT COUNT(*) FROM evenement"
