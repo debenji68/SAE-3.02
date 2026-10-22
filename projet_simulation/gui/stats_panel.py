@@ -29,15 +29,15 @@ class StatsPanel(QWidget):
         layout.addWidget(group)
         layout.addStretch()
 
-    def update_kpis(self, kpis,temps=None):
+    def update_kpis(self, kpis):
         nb = kpis.get("nb_urgences", 0)
         vitesse = kpis.get("vitesse_moyenne", 0.0)
         nb_vehicule = kpis.get("nb_vehicule", 0)
+        temps = kpis.get("temps", 0.0)
         self.label_urgences.setText(f"Passages prioritaires : {nb}")
         self.label_vitesse.setText(f"Vitesse moyenne : {vitesse} km/h")
         self.label_vehicules.setText(f"Véhicules dans la zone : {nb_vehicule}")
-        if temps is not None:
-            self.label_temps.setText(f"Temps simulé : {float(temps):.1f} s")
+        self.label_temps.setText(f"Temps simulé : {temps} s")
 
 
 if __name__ == "__main__":
