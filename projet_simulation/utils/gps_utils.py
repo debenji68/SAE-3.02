@@ -39,3 +39,12 @@ class Haversine:
         distance = RAYON_TERRE * c
 
         return distance
+
+    def distance_metres(self):
+        """Distance en MÈTRES."""
+        return self.formule_haversine() * 1000
+
+
+def distance_haversine(lat1, lon1, lat2, lon2):
+    """Raccourci : distance en mètres entre deux points GPS."""
+    return Haversine(lat1, lon1, lat2, lon2).distance_metres()
