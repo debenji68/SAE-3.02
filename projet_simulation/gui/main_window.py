@@ -31,14 +31,13 @@ class MainWindow(QMainWindow):
         self.onglets.addTab(self.page_stat, "Statistique")
 
         # Lier le signal Sockets de Quentin s'il existe
-        if self.socket_client and hasattr(self.socket_client, 'data_received'):
+        if self.socket_client:
             self.socket_client.data_received.connect(self.donne_recu)
+
 
     def donne_recu(self, data):
         self.canvas.update_data(data)
-        if self.db:
-            kpis = self.db.lire_kpis()
-            self.stats_panel.update_kpis(kpis)
+        self.stats_panel.update_kpis(data.get("kpis", {}))
 
 
 if __name__ == "__main__":
