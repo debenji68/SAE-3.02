@@ -98,6 +98,19 @@ class feuDeCirculation:
                 self.heure_debut_transition = None
                 self.heure_dernier_changement = datetime.now()  # Redémarre le chrono du feu rouge fixe
 
+    def forcer_etat(self, etat: str):
+        """Force immédiatement le feu dans un état fixe (priorité d'un véhicule d'urgence).
+
+        Annule la transition orange en cours et redémarre le chrono de maintien.
+        Écrire seulement feu.etat = "vert" ne suffit pas : une transition déjà
+        engagée repasserait le feu à l'orange puis au rouge juste après.
+        """
+        self.etat = etat
+        self.en_transition = False
+        self.etat_cible = None
+        self.heure_debut_transition = None
+        self.heure_dernier_changement = datetime.now()
+
     def verifier_changement_automatique(self, delai_orange: float = 2.0):
         """Gère le cycle d'alternance automatique du feu à chaque pas de simulation."""
         # Phase 1 : Si une transition est déjà en cours (orange), on tente de finaliser l'état cible
