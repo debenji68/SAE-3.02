@@ -1,6 +1,9 @@
 import math
 
 RAYON_TERRE = 6371
+RAYON_TERRE_M = 6_371_000
+CARREFOUR_LAT = 47.7508
+CARREFOUR_LON = 7.3359
 
 class Haversine:
 
@@ -48,3 +51,29 @@ class Haversine:
 def distance_haversine(lat1, lon1, lat2, lon2):
     """Raccourci : distance en mètres entre deux points GPS."""
     return Haversine(lat1, lon1, lat2, lon2).distance_metres()
+
+
+def metres_vers_gps(x, y, lat_ref=CARREFOUR_LAT, lon_ref=CARREFOUR_LON):
+    """Position simulée (x vers l'est, y vers le nord, en mètres) -> (latitude, longitude)."""
+    lat = lat_ref + math.degrees(y / RAYON_TERRE_M)
+    lon = lon_ref + math.degrees(x / (RAYON_TERRE_M * math.cos(math.radians(lat_ref))))
+    return lat, lon
+
+
+def gps_vers_metres(lat, lon, lat_ref=CARREFOUR_LAT, lon_ref=CARREFOUR_LON):
+    """(latitude, longitude) -> position simulée (x, y) en mètres autour du carrefour."""
+    y = math.radians(lat - lat_ref) * RAYON_TERRE_M
+    x = math.radians(lon - lon_ref) * RAYON_TERRE_M * math.cos(math.radians(lat_ref))
+    return x, y
+
+
+def gps_vers_pixels(lat, lon, largeur, hauteur, etendue_m=110.0,lat_ref=CARREFOUR_LAT, lon_ref=CARREFOUR_LON):
+    """(latitude, longitude) -> (px, py)
+    Le carrefour est au centre de l'écran ; etendue_m mètres séparent le centre
+    du bord le plus proche. À l'écran, Y descend : on inverse donc l'axe nord.
+    """
+    x, y = gps_vers_metres(lat, lon, lat_ref, lon_ref)
+    echelle = min(largeur, hauteur) / (2 * etendue_m)
+    px = largeur / 2 + x * echelle
+    py = hauteur / 2 - y * echelle
+    return px, py
