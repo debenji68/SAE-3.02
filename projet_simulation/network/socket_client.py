@@ -6,12 +6,19 @@ class SocketClient(QThread):
     state_received = pyqtSignal(dict)
     connection_changed = pyqtSignal(bool)
     error_received = pyqtSignal(str)
+    DELAI_RECONNEXION_MS = 2000
 
     def __init__(self, host: str, port: int = 5000):
         super().__init__()
         self.host = host
         self.port = port
-        self.socket = None
+        self.en_cours = False
+
+    def stop(self):
+        """Demande l'arrêt du thread puis attend sa fin."""
+        self.en_cours = False
+        self.wait(3000)
+
 
     def run(self):
          class SocketClient(QThread):
