@@ -1,17 +1,26 @@
-def lancer_serveur():
+import argparse
+import sys
+
+def lancer_serveur(port):
     print("=== Démarrage du Serveur de Simulation ===")
-    # Exemple d'import et de lancement du module serveur
-    # from projet_simulation.network.server import Server
-    # serveur = Server(host="127.0.0.1", port=5555)
-    # serveur.demarrer()
+    from projet_simulation.network.socket_server import ServeurSimulation
+    from projet_simulation.database.stats_db import StatsDB
+    db = StatsDB()
+    ServeurSimulation(db, host="0.0.0.0", port=port).demarrer()
 
 
-def lancer_client():
+def lancer_client(host, port):
     print("=== Démarrage du Client / Affichage Graphique ===")
-    # Exemple d'import et de lancement de la boucle simulation/IHM
-    # from projet_simulation.gui.window import FenetreSimulation
-    # app = FenetreSimulation()
-    # app.run()
+    from PyQt6.QtWidgets import QApplication
+    from projet_simulation.gui.main_window import MainWindow
+    from projet_simulation.network.socket_client import SocketClient
+
+    app = QApplication(sys.argv)
+    client = SocketClient(host, port)
+    fenetre = MainWindow(socket_client=client)
+    fenetre.show()
+    client.start()
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
