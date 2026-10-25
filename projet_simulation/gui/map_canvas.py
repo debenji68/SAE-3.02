@@ -29,14 +29,14 @@ class MapCanvas(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         e = self.echelle()
-        cx = self.width() // 2
-        cy = self.height() // 2
+        coordonne_x = self.width() // 2
+        coordonne_y = self.height() // 2
 
         #Dessin des routes
         largeur_route = int(14 * e)
         painter.setPen(QPen(QColor("white"), largeur_route))
-        painter.drawLine(0, cy, self.width(), cy)
-        painter.drawLine(cx, 0, cx, self.height())
+        painter.drawLine(0, coordonne_y, self.width(), coordonne_y)
+        painter.drawLine(coordonne_x, 0, coordonne_x, self.height())
 
         #Dessin des feux (a modifier selon la class)
         for feu in self.data.get("feux", []):
@@ -59,6 +59,10 @@ class MapCanvas(QWidget):
         for v in self.data.get("vehicules", []):
             x, y = self.gps_vers_ecran(v.get("lat", 0), v.get("lon", 0))
             sens = v.get("sens", 1)
+            if v.get("axe") == "x":
+                y = y + sens * decalage
+            else:
+                x = x + sens * decalage
             est_urgence = v.get("est_urgence", False)
             if est_urgence:
                 couleur = QColor("yellow")
@@ -66,7 +70,7 @@ class MapCanvas(QWidget):
                 couleur = QColor("blue")
             painter.setBrush(QBrush(couleur))
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawRect(int(x) - 6, int(y) - 6, 12, 12)
+            painter.drawRect(x - taille // 2, y - taille // 2, taille, taille)
 
 
 if __name__ == "__main__":
