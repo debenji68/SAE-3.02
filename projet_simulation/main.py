@@ -24,10 +24,15 @@ def lancer_client(host, port):
 
 
 if __name__ == "__main__":
-    # Sélection interactive du rôle sans dépendance réseau ou système
-    choix = input("Choisissez le rôle à exécuter (server/client) [client] : ").strip().lower()
+    parser = argparse.ArgumentParser(description="SAE 3.02 - Simulation de trafic distribuée")
+    parser.add_argument("--role", choices=["server", "client"], required=True,
+                        help="server sur la VM 1, client sur la VM 2")
+    parser.add_argument("--host", default="127.0.0.1", help="IP de la VM 1 (côté client)")
+    parser.add_argument("--port", type=int, default=5000)
+    parser.add_argument("--sans-bdd", action="store_true", help="serveur sans MariaDB (tests)")
+    args = parser.parse_args()
 
-    if choix == "server":
-        lancer_serveur()
+    if args.role == "server":
+        lancer_serveur(args.port, args.sans_bdd)
     else:
-        lancer_client()
+        lancer_client(args.host, args.port)
