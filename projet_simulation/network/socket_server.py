@@ -1,30 +1,62 @@
+
 import socket
 import json
+import time
 
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = 5000
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# Plusieurs voitures avec un identifiant different pour chacune.
+vehicules = [
+    {"id": 1, "x": 100, "y": 200, "vitesse": 50},
+    {"id": 2, "x": 250, "y": 150, "vitesse": 30},
+    {"id": 3, "x": 50, "y": 300, "vitesse": 60}
+]
 
-print("Connexion au serveur...")
+# On garde la connexion de chaque client dans cette liste.
+clients = []
 
-client.connect((HOST, PORT))
+serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serveur.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+serveur.bind((HOST, PORT))
+serveur.listen(5)
+serveur.settimeout(0.2)
 
-print("Connecté au serveur")
+print("Serveur demarre sur le port", PORT)
 
-donnees = client.recv(1024)
+dernier_envoi = time.monotonic()
 
-message = donnees.decode()
+try:
+    while True:
+        try:
+            connexion, adresse = serveur.accept()
+            connexion.settimeout(0.5)
+            clients.append(connexion)
+            print("Nouveau client :", adresse)
+        except socket.timeout:
+            pass
 
-print("Message reçu :", message)
+        if time.monotonic() - dernier_envoi >= 1:
 
-vehicule = json.loads(message)
+            # Chaque voiture est envoyee a tous les clients connectes.
+            for vehicule in vehicules:
+                vehicule["x"] += 5
+                message = (json.dumps(vehicule) + "\n").encode("utf-8")
 
-print("ID :", vehicule["id"])
-print("Position X :", vehicule["x"])
-print("Position Y :", vehicule["y"])
-print("Vitesse :", vehicule["vitesse"])
+                for client in clients[:]:
+                    try:
+                        client.sendall(message)
+                    except OSError:
+                        clients.remove(client)
+                        client.close()
+                        print("Un client s'est deconnecte")
 
-client.close()
+            dernier_envoi = time.monotonic()
 
-print("Connexion fermée")
+except KeyboardInterrupt:
+    print("Arret du serveur")
+
+finally:
+    for client in clients:
+        client.close()
+    serveur.close()
