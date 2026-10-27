@@ -29,10 +29,9 @@ if __name__ == "__main__":
                         help="server sur la VM 1, client sur la VM 2")
     parser.add_argument("--host", default="127.0.0.1", help="IP de la VM 1 (côté client)")
     parser.add_argument("--port", type=int, default=5000)
-    parser.add_argument("--sans-bdd", action="store_true", help="serveur sans MariaDB (tests)")
     args = parser.parse_args()
 
     if args.role == "server":
-        lancer_serveur(args.port, args.sans_bdd)
+        lancer_serveur(args.port)
     else:
         lancer_client(args.host, args.port)

@@ -32,7 +32,7 @@ class StatsDB:
 
     def lire_kpis(self):
         query_urgences = "SELECT COUNT(*) FROM evenement"
-        query_vitesse = "SELECT AVG(vitesse_moyenne) FROM info_traffic"
+        query_vitesse = "SELECT COALESCE(AVG(vitesse_moyenne), 0) FROM info_traffic"
         kpis = {"nb_urgences": 0, "vitesse_moyenne": 0.0}
         connection = self.get_connection()
         cursor = connection.cursor()
