@@ -55,7 +55,11 @@ class ServeurSimulation:
                             except OSError as erreur:
                                 print(f"Connexion interrompue : {erreur}")
                                 break
-
+                            # Quand tous les véhicules sont sortis (ou après 60 s),
+                            # on relance un nouveau scénario.
+                            if sim.est_terminee():
+                                print("Fin du scénario, nouvelle simulation")
+                                sim = Simulation(self.db)
                             # Vise un envoi par pas de simulation en tenant
                             # compte du temps de calcul et de transmission.
                             duree = time.monotonic() - debut
