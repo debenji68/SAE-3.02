@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-def lancer_serveur(args.port):
+def lancer_serveur(port):
     print("=== Démarrage du Serveur de Simulation ===")
     from projet_simulation.network.socket_server import ServeurSimulation
     from projet_simulation.database.stats_db import StatsDB
