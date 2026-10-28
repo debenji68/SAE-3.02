@@ -1,0 +1,2 @@
+# Les scripts Bash gardent des fins de ligne Linux (LF)
+*.sh text eol=lf
