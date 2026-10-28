@@ -29,11 +29,10 @@ class StatsPanel(QWidget):
         layout.addWidget(group)
         layout.addStretch()
 
-    def update_kpis(self, kpis):
+    def update_kpis(self, kpis, temps=0):
         nb = kpis.get("nb_urgences", 0)
         vitesse = kpis.get("vitesse_moyenne", 0.0)
         nb_vehicule = kpis.get("nb_vehicule", 0)
-        temps = kpis.get("temps", 0.0)
         self.label_urgences.setText(f"Passages prioritaires : {nb}")
         self.label_vitesse.setText(f"Vitesse moyenne : {vitesse} km/h")
         self.label_vehicules.setText(f"Véhicules dans la zone : {nb_vehicule}")

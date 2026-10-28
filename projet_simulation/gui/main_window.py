@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QMainWindow, QWidget, QApplication,QVBoxLayout,QTabWidget
-from map_canvas import MapCanvas
-from stats_panel import StatsPanel
+from .map_canvas import MapCanvas
+from .stats_panel import StatsPanel
 
 class MainWindow(QMainWindow):
     def __init__(self, socket_client=None, db=None):
@@ -32,12 +32,12 @@ class MainWindow(QMainWindow):
 
         # Lier le signal Sockets de Quentin s'il existe
         if self.socket_client:
-            self.socket_client.data_received.connect(self.donne_recu)
+            self.socket_client.state_received.connect(self.donne_recu)
 
 
     def donne_recu(self, data):
         self.canvas.update_data(data)
-        self.stats_panel.update_kpis(data.get("kpis", {}))
+        self.stats_panel.update_kpis(data.get("kpis", {}), data.get("temps", 0))
 
 
     def closeEvent(self, event):

@@ -29,8 +29,6 @@ class Haversine:
         difference_lat = self.lat2 - self.lat1
         difference_lon = self.lon2 - self.lon1
 
-        print(f"latitude : {difference_lat} longitude : {difference_lon}" )
-
         return difference_lat, difference_lon
 
     def formule_haversine(self):
