@@ -1,63 +1,67 @@
-import socket
+"""Serveur TCP de la simulation : aucun lancement lors de l'import."""
+
 import json
+import socket
 import time
 
-from projet_simulation.simulation import Simulation
 
-HOST = "0.0.0.0"
-PORT = 5000
+class ServeurSimulation:
+    """Transmet les états de Simulation à une VM cliente à la fois."""
 
-# Plusieurs voitures avec un identifiant different pour chacune.
-vehicules = [
-    {"id": 1, "x": 100, "y": 200, "vitesse": 50},
-    {"id": 2, "x": 250, "y": 150, "vitesse": 30},
-    {"id": 3, "x": 50, "y": 300, "vitesse": 60}
-]
+    def __init__(self, db, host="0.0.0.0", port=5000):
+        self.db = db
+        self.host = host
+        self.port = port
 
-# On garde la connexion de chaque client dans cette liste.
-clients = []
+    def demarrer(self):
+        """Lance le serveur jusqu'à Ctrl+C ; attend un client pour avancer."""
+        # Import différé : importer ce fichier ne charge pas le moteur.
+        from ..simulation import Simulation
 
-serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serveur.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-serveur.bind((HOST, PORT))
-serveur.listen(5)
-serveur.settimeout(0.2)
+        sim = Simulation(self.db)
 
-print("Serveur demarre sur le port", PORT)
-
-dernier_envoi = time.monotonic()
-
-try:
-    while True:
         try:
-            connexion, adresse = serveur.accept()
-            connexion.settimeout(0.5)
-            clients.append(connexion)
-            print("Nouveau client :", adresse)
-        except socket.timeout:
-            pass
+            # Le bloc with ferme automatiquement la socket à la sortie.
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serveur:
+                serveur.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                serveur.bind((self.host, self.port))
+                serveur.listen(1)
 
-        if time.monotonic() - dernier_envoi >= 1:
+                print(f"Serveur en écoute sur {self.host}:{self.port}")
 
-            # Chaque voiture est envoyee a tous les clients connectes.
-            for vehicule in vehicules:
-                vehicule["x"] += 5
-                message = (json.dumps(vehicule) + "\n").encode("utf-8")
+                # Après une déconnexion, on attend une nouvelle connexion
+                # en conservant la même instance de Simulation.
+                while True:
+                    print("En attente d'un client...")
+                    client, adresse = serveur.accept()
 
-                for client in clients[:]:
-                    try:
-                        client.sendall(message)
-                    except OSError:
-                        clients.remove(client)
-                        client.close()
-                        print("Un client s'est deconnecte")
+                    with client:
+                        # Évite de rester bloqué indéfiniment sur un envoi.
+                        client.settimeout(2.0)
+                        print(f"Client connecté : {adresse}")
 
-            dernier_envoi = time.monotonic()
+                        while True:
+                            debut = time.monotonic()
 
-except KeyboardInterrupt:
-    print("Arret du serveur")
+                            # Le moteur calcule les véhicules, feux et KPI.
+                            sim.step()
+                            etat = sim.etat()
 
-finally:
-    for client in clients:
-        client.close()
-    serveur.close()
+                            # Un JSON complet par ligne, encodé en UTF-8.
+                            message = json.dumps(etat, ensure_ascii=False) + "\n"
+
+                            try:
+                                client.sendall(message.encode("utf-8"))
+                            except OSError as erreur:
+                                print(f"Connexion interrompue : {erreur}")
+                                break
+
+                            # Vise un envoi par pas de simulation en tenant
+                            # compte du temps de calcul et de transmission.
+                            duree = time.monotonic() - debut
+                            time.sleep(max(0.0, sim.dt - duree))
+
+        except KeyboardInterrupt:
+            print("\nArrêt demandé.")
+        finally:
+            print("Serveur arrêté.")
