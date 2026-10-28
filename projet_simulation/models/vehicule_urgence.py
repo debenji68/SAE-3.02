@@ -24,33 +24,40 @@ class vehicule_urgence(Voiture):
         """
         super().__init__(identifiant, positionX, positionY, vitesse, sens_circulation)
 
-    def forcer_feu_vert_si_proche(
-            self,
-            feu: feuDeCirculation,
-            position_ligne_arret: float,
-            distance_detection: float = 100.0,
-            axe: str = "x"
-    ):
-        """Force le feu tricolore au vert si le véhicule d'urgence entre dans la zone de détection.
+    def distance_au_feu(self, position_ligne_arret: float, axe: str = "x") -> float:
+        """Distance (en m) qui reste à parcourir jusqu'à la ligne d'arrêt.
 
-        Fonctionne pour l'axe X ou Y selon le paramètre 'axe' choisi.
+        Négative quand le véhicule a déjà franchi la ligne.
         """
         # Sélection de la position courante en fonction de l'axe de circulation (X ou Y)
         pos_actuelle = self.positionX if axe == "x" else self.positionY
 
         # Cas 1 : Circulation dans le sens positif (+1, ex: de gauche à droite ou du bas vers le haut)
         if self.sens_circulation == 1:
-            distance_au_feu = position_ligne_arret - pos_actuelle
-            # Si le véhicule est dans la zone de détection en amont de la ligne d'arrêt
-            if 0 <= distance_au_feu <= distance_detection:
-                feu.etat = "vert"
+            return position_ligne_arret - pos_actuelle
 
         # Cas 2 : Circulation dans le sens négatif (-1, ex: de droite à gauche ou du haut vers le bas)
-        else:
-            distance_au_feu = pos_actuelle - position_ligne_arret
-            # Si le véhicule est dans la zone de détection en amont de la ligne d'arrêt
-            if 0 <= distance_au_feu <= distance_detection:
-                feu.etat = "vert"
+        return pos_actuelle - position_ligne_arret
+
+    def est_dans_zone_detection(self, position_ligne_arret: float,
+                                distance_detection: float = 50.0, axe: str = "x") -> bool:
+        """Vrai si le véhicule est en amont de la ligne d'arrêt, à moins de distance_detection."""
+        return 0 <= self.distance_au_feu(position_ligne_arret, axe) <= distance_detection
+
+    def forcer_feu_vert_si_proche(
+            self,
+            feu: feuDeCirculation,
+            position_ligne_arret: float,
+            distance_detection: float = 50.0,
+            axe: str = "x"
+    ):
+        """Force le feu tricolore au vert si le véhicule d'urgence entre dans la zone de détection.
+
+        Fonctionne pour l'axe X ou Y selon le paramètre 'axe' choisi.
+        """
+        if self.est_dans_zone_detection(position_ligne_arret, distance_detection, axe):
+            # forcer_etat annule l'orange en cours : sinon le feu repasse au rouge juste après
+            feu.forcer_etat("vert")
 
 
 if __name__ == "__main__":

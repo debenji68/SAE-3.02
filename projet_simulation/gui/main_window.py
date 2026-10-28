@@ -40,6 +40,12 @@ class MainWindow(QMainWindow):
         self.stats_panel.update_kpis(data.get("kpis", {}))
 
 
+    def closeEvent(self, event):
+        if self.socket_client:
+            self.socket_client.stop()
+        super().closeEvent(event)
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     win = MainWindow()
