@@ -1,0 +1,4 @@
+# Dépendances Python du projet SAÉ 3.02 (pip install -r requirements.txt)
+# VM 1 (serveur) n'a besoin que de mysql-connector-python ; VM 2 (client) que de PyQt6.
+PyQt6>=6.4
+mysql-connector-python>=8.0
