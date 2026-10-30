@@ -65,8 +65,7 @@ class Simulation:
 
         #Creation des vehicules d'urgence
         self.pompier_x = vehicule_urgence("Pompier1", -50.0, 0.0, 50.0, sens_circulation=1)
-        self.ambulance_y = vehicule_urgence("Ambulance1", 0.0, -50.0, 50.0, sens_circulation=1)
-
+        self.ambulance_y = vehicule_urgence("Ambulance1", 0.0, -110.0, 50.0, sens_circulation=1)
         #Files de vehicules sur chaque axe
         self.files_voitures_x = [
             self.pompier_x,
