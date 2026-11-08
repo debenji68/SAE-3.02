@@ -94,11 +94,12 @@ bash projet_simulation/setup_vm2_client.sh
 Le script installe PyQt6, **cherche tout seul la VM 1** sur le réseau local (port 5000) puis ouvre l'interface. Si la recherche échoue, donner l'IP : `bash projet_simulation/setup_vm2_client.sh 192.168.56.10`.
 
 **Si il y a un problème lors de l'utilisation du script bash a cause d'un processus, il faut kill ce dernier :**
-    A faire
+
     ```bash
     su -
     kill <N°processus>
     ```
+    
     Exemple :
         [INFO] Installation des paquets système (MariaDB, Python, ufw)...
         E: Impossible d'obtenir le verrou /var/lib/apt/lists/lock. Il est occupé par le processus 1647 (packagekitd)
