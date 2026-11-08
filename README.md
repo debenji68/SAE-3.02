@@ -100,7 +100,7 @@ Le script installe PyQt6, **cherche tout seul la VM 1** sur le réseau local (po
     kill <N°processus>
     ```
     
-    Exemple :
+Exemple :
         [INFO] Installation des paquets système (MariaDB, Python, ufw)...
         E: Impossible d'obtenir le verrou /var/lib/apt/lists/lock. Il est occupé par le processus 1647 (packagekitd)
         E: Impossible de verrouiller le répertoire /var/lib/apt/lists/
