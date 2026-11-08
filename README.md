@@ -95,16 +95,19 @@ Le script installe PyQt6, **cherche tout seul la VM 1** sur le réseau local (po
 
 **Si il y a un problème lors de l'utilisation du script bash a cause d'un processus, il faut kill ce dernier :**
 
-    ```bash
+```bash
     su -
     kill <N°processus>
-    ```
+```
     
 Exemple :
+
+```bash
         [INFO] Installation des paquets système (MariaDB, Python, ufw)...
         E: Impossible d'obtenir le verrou /var/lib/apt/lists/lock. Il est occupé par le processus 1647 (packagekitd)
         E: Impossible de verrouiller le répertoire /var/lib/apt/lists/
         root@vbox:~/SAE-3.02# kill 1647
+```
 
 ### Méthode manuelle (pas à pas)
 
