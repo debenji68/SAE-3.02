@@ -1,4 +1,4 @@
-# SAÉ 3.02 — Régulation du trafic pour véhicules prioritaires
+# SAÉ 3.02 — Développer une application communicante
 
 **Groupe :** Zero Trust
 **Membres :**
