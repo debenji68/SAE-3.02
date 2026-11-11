@@ -3,7 +3,9 @@ import sys
 
 
 class StatsPanel(QWidget):
+    """Panneau qui affiche les indicateurs de la simulation."""
     def __init__(self):
+        """Crée les quatre étiquettes du tableau de bord."""
         super().__init__()
         layout = QVBoxLayout(self)
 
@@ -30,6 +32,12 @@ class StatsPanel(QWidget):
         layout.addStretch()
 
     def update_kpis(self, kpis, temps=0):
+        """Met à jour les étiquettes avec les derniers indicateurs.
+
+        Args:
+            kpis (dict): nb_urgences, vitesse_moyenne et nb_vehicule
+            temps (float): temps simulé, en secondes
+        """
         nb = kpis.get("nb_urgences", 0)
         vitesse = kpis.get("vitesse_moyenne", 0.0)
         nb_vehicule = kpis.get("nb_vehicule", 0)
