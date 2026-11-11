@@ -2,12 +2,25 @@ import math
 
 RAYON_TERRE = 6371
 RAYON_TERRE_M = 6_371_000
+# Position GPS du carrefour simulé (Mulhouse) : c'est le point (0, 0) de la simulation
 CARREFOUR_LAT = 47.7508
 CARREFOUR_LON = 7.3359
 
 class Haversine:
+    """Calcule la distance entre deux points GPS avec la formule de Haversine."""
 
     def __init__(self, lat1, lon1, lat2, lon2):
+        """Vérifie les coordonnées puis les convertit en radians.
+
+        Args:
+            lat1 (float): latitude du point 1, entre -90 et 90
+            lon1 (float): longitude du point 1, entre -180 et 180
+            lat2 (float): latitude du point 2
+            lon2 (float): longitude du point 2
+
+        Raises:
+            ValueError: si une coordonnée est hors limites
+        """
         if lat1 < -90 or lat1 > 90:
             raise ValueError("Latitude 1 incorrecte")
 
@@ -26,12 +39,22 @@ class Haversine:
         self.lon2 = math.radians(lon2)
 
     def difference(self):
+        """Calcule l'écart de latitude et de longitude entre les deux points.
+
+        Returns:
+            tuple: (écart de latitude, écart de longitude), en radians
+        """
         difference_lat = self.lat2 - self.lat1
         difference_lon = self.lon2 - self.lon1
 
         return difference_lat, difference_lon
 
     def formule_haversine(self):
+        """Applique la formule de Haversine.
+
+        Returns:
+            float: distance entre les deux points, en kilomètres
+        """
 
         difference_lat, difference_lon = self.difference()
 
