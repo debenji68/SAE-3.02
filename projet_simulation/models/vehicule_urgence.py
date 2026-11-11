@@ -39,18 +39,11 @@ class vehicule_urgence(Voiture):
         # Cas 2 : Circulation dans le sens négatif (-1, ex: de droite à gauche ou du haut vers le bas)
         return pos_actuelle - position_ligne_arret
 
-    def est_dans_zone_detection(self, position_ligne_arret: float,
-                                distance_detection: float = 50.0, axe: str = "x") -> bool:
+    def est_dans_zone_detection(self, position_ligne_arret: float, distance_detection: float = 50.0, axe: str = "x") -> bool:
         """Vrai si le véhicule est en amont de la ligne d'arrêt, à moins de distance_detection."""
         return 0 <= self.distance_au_feu(position_ligne_arret, axe) <= distance_detection
 
-    def forcer_feu_vert_si_proche(
-            self,
-            feu: feuDeCirculation,
-            position_ligne_arret: float,
-            distance_detection: float = 50.0,
-            axe: str = "x"
-    ):
+    def forcer_feu_vert_si_proche(self, feu: feuDeCirculation, position_ligne_arret: float, distance_detection: float = 50.0, axe: str = "x"):
         """Force le feu tricolore au vert si le véhicule d'urgence entre dans la zone de détection.
 
         Fonctionne pour l'axe X ou Y selon le paramètre 'axe' choisi.
