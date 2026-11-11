@@ -6,6 +6,14 @@ from projet_simulation.utils.gps_utils import metres_vers_gps
 
 
 def ligne_arret(sens):
+    """Donne la position de la ligne d'arrêt selon le sens de circulation.
+
+    Args:
+        sens (int): 1 ou -1
+
+    Returns:
+        float: -10.0 pour le sens 1, +10.0 pour le sens -1
+    """
     #les lignes d'arret sont a 10 m du centre : -10 si on arrive du cote negatif, +10 sinon
     return -10.0 * sens
 
@@ -36,6 +44,16 @@ def trier_file_par_position(file_voitures, axe="x"):
     return sens_1 + sens_moins_1
 
 def calculer_metriques(vehicules):
+    """Calcule la vitesse moyenne et le nombre de véhicules dans la zone.
+
+    La zone est un carré de 100 m autour du centre du carrefour.
+
+    Args:
+        vehicules (list): tous les véhicules de la simulation
+
+    Returns:
+        tuple: (vitesse moyenne en km/h, nombre de véhicules)
+    """
     #vitesse moyenne et nombre de vehicules encore dans la zone (100 m autour du carrefour)
     dans_zone = []
     for v in vehicules:
@@ -51,7 +69,13 @@ def calculer_metriques(vehicules):
     return total / len(dans_zone), len(dans_zone)
 
 class Simulation:
+    """Simulation d'un carrefour à deux axes (x et y) avec priorité aux urgences."""
     def __init__(self, db):
+        """Crée les feux, les véhicules et les compteurs d'un nouveau scénario.
+
+        Args:
+            db (StatsDB): base de données pour les statistiques
+        """
         self.db = db
         self.dt = 0.1          #pas de temps (100 ms)
         self.temps_max = 60    #duree max d'un scenario en secondes
@@ -81,7 +105,7 @@ class Simulation:
             Voiture("V8", 0.0, 65.0, 50.0, sens_circulation=-1),
             Voiture("V9", 0.0, 80.0, 50.0, sens_circulation=-1),
         ]
-
+        #Aucun véhicule ne tourne au départ
         for v in self.tous_les_vehicules():
             v.en_virage = False
             v.intention_virage = None
@@ -96,10 +120,20 @@ class Simulation:
 
 
     def tous_les_vehicules(self):
+        """Renvoie la liste de tous les véhicules des deux axes.
+
+        Returns:
+            list: véhicules de l'axe x puis de l'axe y
+        """
         return self.files_voitures_x + self.files_voitures_y
 
 
     def est_terminee(self):
+        """Indique si le scénario est fini.
+
+        Returns:
+            bool: True après temps_max secondes ou quand tous les véhicules sont sortis de la zone
+        """
         if self.temps_ecoule >= self.temps_max:
             return True
         #fini aussi si toutes les voitures sont sorties de la zone
@@ -110,6 +144,18 @@ class Simulation:
 
 
     def verifier_urgences(self, axe, file_voitures, feu_vert, feu_rouge):
+        """Applique la règle des 50 m sur un axe.
+
+        Si un véhicule d'urgence approche de la ligne d'arrêt ou traverse le carrefour,
+        son feu passe au vert et l'autre au rouge. Le passage est enregistré en base
+        une seule fois, à l'entrée dans la zone.
+
+        Args:
+            axe (str): "x" ou "y"
+            file_voitures (list): véhicules de l'axe
+            feu_vert (feuDeCirculation): feu de l'axe, à mettre au vert
+            feu_rouge (feuDeCirculation): feu de l'autre axe, à mettre au rouge
+        """
         #regle des 50 m : le vehicule d'urgence met son feu au vert et l'autre au rouge
         for v in file_voitures:
             if not isinstance(v, vehicule_urgence) or v.en_virage:
@@ -141,9 +187,21 @@ class Simulation:
 
 
     def avancer_file(self, file_voitures, feu, axe, a_transferer):
+        """Fait avancer tous les véhicules d'une file pendant un pas.
+
+        Gère les trois cas : virage en cours, début de virage au centre, ou ligne
+        droite (feux et distance de sécurité).
+
+        Args:
+            file_voitures (list): véhicules de l'axe, triés par position
+            feu (feuDeCirculation): feu de l'axe
+            axe (str): "x" ou "y"
+            a_transferer (list): reçoit les véhicules qui ont fini un virage
+        """
         for i in range(len(file_voitures)):
             vehicule = file_voitures[i]
             voiture_devant = None
+            #la file est triée : le véhicule précédent est devant s'il roule dans le même sens
             if i > 0 and file_voitures[i - 1].sens_circulation == vehicule.sens_circulation:
                 voiture_devant = file_voitures[i - 1]
 
@@ -192,6 +250,7 @@ class Simulation:
 
 
     def step(self):
+        """Avance la simulation d'un pas de temps (dt = 0,1 s)."""
         self.pas = self.pas + 1
         self.temps_ecoule = self.pas * self.dt
 
@@ -231,6 +290,15 @@ class Simulation:
 
 
     def vehicule_en_dict(self, v, axe):
+        """Convertit un véhicule en dictionnaire pour le JSON.
+
+        Args:
+            v (Voiture): véhicule à convertir
+            axe (str): axe sur lequel il circule
+
+        Returns:
+            dict: identifiant, positions en mètres et en GPS, vitesse, sens, type
+        """
         lat, lon = metres_vers_gps(v.positionX, v.positionY)
         return {
             "id": v.identifiant,
@@ -246,6 +314,18 @@ class Simulation:
 
 
     def feu_en_dict(self, feu_id, feu, x, y, axe):
+        """Convertit un feu en dictionnaire pour le JSON.
+
+        Args:
+            feu_id (str): identifiant du feu
+            feu (feuDeCirculation): feu à convertir
+            x (float): position x du feu, en mètres
+            y (float): position y du feu, en mètres
+            axe (str): axe contrôlé par ce feu
+
+        Returns:
+            dict: identifiant, positions, état et forçage par une urgence
+        """
         lat, lon = metres_vers_gps(x, y)
         return {
             "id": feu_id,
@@ -259,6 +339,11 @@ class Simulation:
 
 
     def etat(self):
+        """Construit l'état complet envoyé à la VM 2.
+
+        Returns:
+            dict: temps, véhicules, feux et KPI
+        """
         #dictionnaire envoye en JSON a la VM 2
         vehicules = []
         for v in self.files_voitures_x:
