@@ -5,7 +5,9 @@ from PyQt6.QtCore import Qt
 from projet_simulation.utils.gps_utils import gps_vers_pixels, metres_vers_gps
 
 class MapCanvas(QWidget):
+    """Widget qui dessine le carrefour, les feux et les véhicules."""
     def __init__(self):
+         """Initialise des données vides et la zone affichée (110 m autour du centre)."""
         super().__init__()
         self.data = {"vehicules": [], "feux": []}
         self.etendue = 110   #nombre de metres entre le centre et le bord de la carte
@@ -13,20 +15,46 @@ class MapCanvas(QWidget):
 
 
     def update_data(self, data):
+        """Remplace les données affichées puis redessine le widget.
+
+        Args:
+            data (dict): état de la simulation
+        """
         self.data = data
         self.update()
 
 
     def echelle(self):
+        """Calcule le nombre de pixels par mètre selon la taille de la fenêtre.
+
+        Returns:
+            float: pixels par mètre
+        """
         return min(self.width(), self.height()) / (2 * self.etendue)
 
 
     def gps_vers_ecran(self, lat, lon):
+        """Convertit une position GPS en pixels du widget.
+
+        Args:
+            lat (float): latitude
+            lon (float): longitude
+
+        Returns:
+            tuple: (x, y) en pixels
+        """
         px, py = gps_vers_pixels(lat, lon, self.width(), self.height(), self.etendue)
         return int(px), int(py)
 
 
     def paintEvent(self, event):
+         """Dessine les routes, les feux puis les véhicules.
+
+        Appelée automatiquement par Qt après chaque update().
+
+        Args:
+            event (QPaintEvent): événement de dessin envoyé par Qt
+        """
         painter = QPainter(self)
         e = self.echelle()
         coordonne_x = self.width() // 2
@@ -38,7 +66,7 @@ class MapCanvas(QWidget):
         painter.drawLine(0, coordonne_y, self.width(), coordonne_y)
         painter.drawLine(coordonne_x, 0, coordonne_x, self.height())
 
-        #Dessin des feux (a modifier selon la class)
+        #Dessin des feux
         for feu in self.data.get("feux", []):
             x, y = self.gps_vers_ecran(feu.get("lat", 0), feu.get("lon", 0))
             etat = feu.get("etat", "rouge")
