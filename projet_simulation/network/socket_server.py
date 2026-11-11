@@ -9,6 +9,13 @@ class ServeurSimulation:
     """Transmet les états de Simulation à une VM cliente à la fois."""
 
     def __init__(self, db, host="0.0.0.0", port=5000):
+        """Garde la configuration du serveur, sans ouvrir la socket.
+
+        Args:
+            db (StatsDB): base de données transmise à la simulation
+            host (str): adresse d'écoute
+            port (int): port d'écoute
+        """
         self.db = db
         self.host = host
         self.port = port
