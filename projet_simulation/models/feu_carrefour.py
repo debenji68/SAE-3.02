@@ -5,6 +5,13 @@ class feuDeCirculation:
     """Gère un feu de circulation avec gestion des transitions temporelles (Vert -> Orange -> Rouge)."""
 
     def __init__(self, etat: str, duree_maintien_feu_vert: float = 5.0, duree_maintien_feu_rouge: float = 5.0):
+        """Initialise le feu dans l'état donné.
+
+        Args:
+            etat (str): "vert", "orange" ou "rouge"
+            duree_maintien_feu_vert (float): durée minimale du vert, en secondes
+            duree_maintien_feu_rouge (float): durée minimale du rouge, en secondes
+        """
         # État courant du feu ('vert', 'orange', 'rouge')
         self.__etat = etat
 
@@ -25,26 +32,33 @@ class feuDeCirculation:
         self.__duree_maintien_feu_rouge = duree_maintien_feu_rouge
 
     def __str__(self) -> str:
+        """Renvoie une description lisible du feu."""
         return f"feuDeCirculation(état={self.__etat}, vert={self.__duree_maintien_feu_vert}s, rouge={self.__duree_maintien_feu_rouge}s)"
 
     # --- Accesseurs ---
 
     def get_etat(self):
+        """Renvoie l'état actuel du feu."""
         return self.__etat
 
     def set_etat(self, etat):
+        """Modifie l'état du feu (sans gérer la transition orange)."""
         self.__etat = etat
 
     def get_duree_maintien_feu_vert(self):
+        """Renvoie la durée minimale du feu vert, en secondes."""
         return self.__duree_maintien_feu_vert
 
     def set_duree_maintien_feu_vert(self, duree_maintien_feu_vert: float):
+        """Modifie la durée minimale du feu vert, en secondes."""
         self.__duree_maintien_feu_vert = duree_maintien_feu_vert
 
     def get_duree_maintien_feu_rouge(self):
+        """Renvoie la durée minimale du feu rouge, en secondes."""
         return self.__duree_maintien_feu_rouge
 
     def set_duree_maintien_feu_rouge(self, duree_maintien_feu_rouge: float):
+        """Modifie la durée minimale du feu rouge, en secondes."""
         self.__duree_maintien_feu_rouge = duree_maintien_feu_rouge
 
     # Définition des propriétés
