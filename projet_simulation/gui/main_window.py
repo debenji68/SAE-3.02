@@ -4,7 +4,14 @@ from .map_canvas import MapCanvas
 from .stats_panel import StatsPanel
 
 class MainWindow(QMainWindow):
+    """Fenêtre principale avec deux onglets : la carte et les statistiques."""
     def __init__(self, socket_client=None, db=None):
+        """Construit les onglets et branche le client réseau.
+
+        Args:
+            socket_client (SocketClient): client TCP qui reçoit les états (None pour tester l'affichage seul)
+            db (StatsDB): base de données
+        """
         super().__init__()
         self.setWindowTitle("Simulation de Trafic")
         self.resize(1024, 768)
@@ -36,11 +43,24 @@ class MainWindow(QMainWindow):
 
 
     def donne_recu(self, data):
+         """Met à jour la carte et le tableau de bord avec un nouvel état.
+
+        Appelée par le signal state_received du client, environ 10 fois par seconde.
+
+        Args:
+            data (dict): état complet de la simulation reçu du serveur
+        """
         self.canvas.update_data(data)
         self.stats_panel.update_kpis(data.get("kpis", {}), data.get("temps", 0))
 
 
     def closeEvent(self, event):
+         """Arrête proprement le thread réseau quand on ferme la fenêtre.
+
+        Args:
+            event (QCloseEvent): événement de fermeture envoyé par Qt
+        """
+        if self.soc
         if self.socket_client:
             self.socket_client.stop()
         super().closeEvent(event)
