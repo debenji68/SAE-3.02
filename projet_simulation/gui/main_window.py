@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
 
 
     def donne_recu(self, data):
-         """Met à jour la carte et le tableau de bord avec un nouvel état.
+        """Met à jour la carte et le tableau de bord avec un nouvel état.
 
         Appelée par le signal state_received du client, environ 10 fois par seconde.
 
