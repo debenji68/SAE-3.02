@@ -9,6 +9,15 @@ class Voiture:
     """
 
     def __init__(self, identifiant: str, positionX: float, positionY: float, vitesse: float, sens_circulation: int = 1):
+        """Initialise la position, la vitesse et les paramètres de virage.
+
+        Args:
+            identifiant (str): nom unique du véhicule
+            positionX (float): position x, en mètres
+            positionY (float): position y, en mètres
+            vitesse (float): vitesse de départ, aussi vitesse maximale, en km/h
+            sens_circulation (int): 1 (sens positif) ou -1 (sens inverse)
+        """
         self.__identifiant = identifiant  # Identifiant unique du véhicule
         self.__positionX = positionX  # Position X (axe horizontal : gauche -> droite)
         self.__positionY = positionY  # Position Y (axe vertical : bas -> haut)
@@ -32,38 +41,49 @@ class Voiture:
         self.type_virage_courant = None  # 'gauche' ou 'droite'
 
     def __str__(self) -> str:
+        """Renvoie une description lisible de la voiture."""
         return f"Voiture(ID: {self.__identifiant}, X: {self.__positionX:.1f}, Y: {self.__positionY:.1f}, Vitesse: {self.__vitesse:.1f} km/h)"
 
     # --- Accesseurs et Propriétés ---
 
     def get_identifiant(self):
+        """Renvoie l'identifiant du véhicule."""
         return self.__identifiant
 
     def set_identifiant(self, val):
+        """Modifie l'identifiant du véhicule."""
         self.__identifiant = val
 
     def get_positionX(self):
+        """Renvoie la position x, en mètres."""
         return self.__positionX
 
     def set_positionX(self, val):
+        """Modifie la position x, en mètres."""
         self.__positionX = val
 
     def get_positionY(self):
+        """Renvoie la position y, en mètres."""
         return self.__positionY
 
     def set_positionY(self, val):
+        """Modifie la position y, en mètres."""
         self.__positionY = val
 
     def get_vitesse(self):
+        """Renvoie la vitesse actuelle, en km/h."""
         return self.__vitesse
 
     def set_vitesse(self, val):
+        """Modifie la vitesse actuelle, en km/h."""
         self.__vitesse = val
 
     def get_sens_circulation(self):
+        """Renvoie le sens de circulation (1 ou -1)."""
         return self.__sens_circulation
 
     def set_sens_circulation(self, val):
+        """Modifie le sens de circulation (1 ou -1)."""
         self.__sens_circulation = val
 
     identifiant = property(fget=get_identifiant, fset=set_identifiant)
@@ -249,6 +269,10 @@ class Voiture:
 
 
 def tester_tous_les_virages():
+    """Teste les 8 virages possibles (4 directions x gauche/droite).
+
+    Vérifie la position et le cap finaux, et affiche OK ou ÉCHEC pour chaque cas.
+    """
     print("=" * 60)
     print("TEST DE TOUTES LES COMBINAISONS DE VIRAGES (4 Directions x 2 Côtés)")
     print("=" * 60)
