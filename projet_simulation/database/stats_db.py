@@ -3,7 +3,7 @@ import mysql.connector
 class StatsDB:
     """Gère la connexion à la base MariaDB et les requêtes SQL du projet."""
     def __init__(self, host="localhost", user="simu_user", password="simu_password", database="simu_db"):
-         """Garde les paramètres de connexion à la base.
+        """Garde les paramètres de connexion à la base.
 
         Args:
             host (str): adresse du serveur MariaDB
@@ -24,7 +24,7 @@ class StatsDB:
 
 
     def enregistrer(self,vehicule_id, feu_id, distance):
-         """Enregistre un passage prioritaire dans la table evenement.
+        """Enregistre un passage prioritaire dans la table evenement.
 
         Args:
             vehicule_id (str): identifiant du véhicule d'urgence
@@ -41,7 +41,7 @@ class StatsDB:
         connection.close()
 
     def enregistrer_metriques(self, vitesse_moyenne, nb_vehicule):
-         """Enregistre la vitesse moyenne et le nombre de véhicules dans info_traffic.
+        """Enregistre la vitesse moyenne et le nombre de véhicules dans info_traffic.
 
         Args:
             vitesse_moyenne (float): vitesse moyenne des véhicules dans la zone, en km/h
