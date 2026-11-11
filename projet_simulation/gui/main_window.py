@@ -55,12 +55,11 @@ class MainWindow(QMainWindow):
 
 
     def closeEvent(self, event):
-         """Arrête proprement le thread réseau quand on ferme la fenêtre.
+        """Arrête proprement le thread réseau quand on ferme la fenêtre.
 
         Args:
             event (QCloseEvent): événement de fermeture envoyé par Qt
         """
-        if self.soc
         if self.socket_client:
             self.socket_client.stop()
         super().closeEvent(event)
