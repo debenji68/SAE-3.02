@@ -2,6 +2,11 @@ import argparse
 import sys
 
 def lancer_serveur(port):
+    """Lance le serveur TCP de la simulation.
+
+    Args:
+        port (int): port d'écoute du serveur
+    """
     print("=== Démarrage du Serveur de Simulation ===")
     from projet_simulation.network.socket_server import ServeurSimulation
     from projet_simulation.database.stats_db import StatsDB
@@ -10,6 +15,12 @@ def lancer_serveur(port):
 
 
 def lancer_client(host, port):
+    """Ouvre l'interface graphique et se connecte au serveur.
+
+    Args:
+        host (str): adresse IP de la VM 1
+        port (int): port du serveur
+    """
     print("=== Démarrage du Client / Affichage Graphique ===")
     from PyQt6.QtWidgets import QApplication
     from projet_simulation.gui.main_window import MainWindow
@@ -19,8 +30,8 @@ def lancer_client(host, port):
     client = SocketClient(host, port)
     fenetre = MainWindow(socket_client=client)
     fenetre.show()
-    client.start()
-    sys.exit(app.exec())
+    client.start() # lance run() dans un thread séparé
+    sys.exit(app.exec()) # boucle Qt, jusqu'à la fermeture de la fenêtre
 
 
 if __name__ == "__main__":
@@ -30,6 +41,8 @@ if __name__ == "__main__":
     parser.add_argument("--host", default="127.0.0.1", help="IP de la VM 1 (côté client)")
     parser.add_argument("--port", type=int, default=5000)
     args = parser.parse_args()
+
+    # Le rôle choisit ce que lance la machine
 
     if args.role == "server":
         lancer_serveur(args.port)
