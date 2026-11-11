@@ -7,7 +7,7 @@ from projet_simulation.utils.gps_utils import gps_vers_pixels, metres_vers_gps
 class MapCanvas(QWidget):
     """Widget qui dessine le carrefour, les feux et les véhicules."""
     def __init__(self):
-         """Initialise des données vides et la zone affichée (110 m autour du centre)."""
+        """Initialise des données vides et la zone affichée (110 m autour du centre)."""
         super().__init__()
         self.data = {"vehicules": [], "feux": []}
         self.etendue = 110   #nombre de metres entre le centre et le bord de la carte
@@ -48,7 +48,7 @@ class MapCanvas(QWidget):
 
 
     def paintEvent(self, event):
-         """Dessine les routes, les feux puis les véhicules.
+        """Dessine les routes, les feux puis les véhicules.
 
         Appelée automatiquement par Qt après chaque update().
 
